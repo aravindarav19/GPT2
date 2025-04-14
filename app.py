@@ -3,7 +3,7 @@ import time
 from together import Together
 
 # 🔐 Replace with st.secrets["TOGETHER_API_KEY"] for deployment
-TOGETHER_API_KEY = st.secrets["your_actual_api_key_here"] # ⬅️ Replace this!
+TOGETHER_API_KEY = st.secrets["TOGETHER_API_KEY"] # ⬅️ Replace this!
 client = Together(api_key=TOGETHER_API_KEY)
 
 # Model name from Together
