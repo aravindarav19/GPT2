@@ -1,6 +1,11 @@
 import streamlit as st
 import time
 from together import Together
+import streamlit_speech_recognition as sr
+from gtts import gTTS
+import os
+from tempfile import NamedTemporaryFile
+
 
 # 🔐 Replace with st.secrets["TOGETHER_API_KEY"] for deployment
 TOGETHER_API_KEY = st.secrets["TOGETHER_API_KEY"] # ⬅️ Replace this!
@@ -46,7 +51,17 @@ def clean_reply(text):
     return "\n".join(cleaned).strip()
 
 # Chat Input
-user_input = st.text_input("You:")
+st.markdown("🎤 Speak or type your message:")
+user_input = ""
+
+# Voice input
+speech_text = sr.speech_recognition()
+if speech_text:
+    st.success(f"Recognized: {speech_text}")
+    user_input = speech_text
+else:
+    user_input = st.text_input("You:", key="text_input")
+
 
 if st.button("Send") and user_input:
     styled_prompt = apply_style(user_input, style)
@@ -66,6 +81,13 @@ if st.button("Send") and user_input:
         )
         reply = response.choices[0].message.content
         reply = clean_reply(reply)
+    # Text-to-Speech
+with NamedTemporaryFile(delete=True) as fp:
+    tts = gTTS(text=reply)
+    tts.save(fp.name + ".mp3")
+    audio_file = fp.name + ".mp3"
+    st.audio(audio_file, format="audio/mp3")
+
 
     # Save to history
     st.session_state.history.append((user_input, reply))
@@ -73,5 +95,5 @@ if st.button("Send") and user_input:
     # Display chat
     for q, a in st.session_state.history:
         st.markdown(f"**You:** {q}")
-        st.markdown("**Konan:**")
+        st.markdown("**Konanara:**")
         stream_text(a)
