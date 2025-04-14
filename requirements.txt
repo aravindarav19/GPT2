@@ -1,4 +1,3 @@
 streamlit
 together
-streamlit_speech_recognition
-gTTS
+
